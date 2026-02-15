@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>GhostRadar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <h1>GhostRadar</h1>
+    </header>
+
+    <!-- Scan input (above the fold) -->
+    <section class="scan-section">
+      <textarea id="scan-input" class="scan-textarea" placeholder="Paste a message…" rows="4"></textarea>
+      <div class="direction-toggle">
+        <button class="dir-btn" data-dir="they" id="dir-they">They sent</button>
+        <button class="dir-btn active" data-dir="they" id="dir-they-default" style="display:none;">They sent</button>
+        <button class="dir-btn" data-dir="me" id="dir-me">I sent</button>
+      </div>
+      <button id="scan-btn" class="scan-btn">⚡ Scan Signals</button>
+    </section>
+
+    <!-- Results (hidden until first scan) -->
+    <section id="results-section" class="results-section">
+
+      <!-- Archetype -->
+      <div style="text-align:center; margin-bottom:0.5rem;">
+        <span id="archetype-badge" class="archetype-badge" style="display:none;"></span>
+      </div>
+
+      <!-- 4 Meters -->
+      <div class="meters-grid">
+        <div class="meter-card">
+          <div class="meter-label">Interest</div>
+          <div class="meter-ring-wrap" id="meter-interest">
+            <svg viewBox="0 0 80 80">
+              <circle class="meter-ring-bg" cx="40" cy="40" r="34"/>
+              <circle class="meter-ring-fill" cx="40" cy="40" r="34"/>
+            </svg>
+            <div class="meter-value">0</div>
+          </div>
+        </div>
+        <div class="meter-card">
+          <div class="meter-label">Red Flag Risk</div>
+          <div class="meter-ring-wrap" id="meter-redflag">
+            <svg viewBox="0 0 80 80">
+              <circle class="meter-ring-bg" cx="40" cy="40" r="34"/>
+              <circle class="meter-ring-fill" cx="40" cy="40" r="34"/>
+            </svg>
+            <div class="meter-value">0</div>
+          </div>
+        </div>
+        <div class="meter-card">
+          <div class="meter-label">Emotional Distance</div>
+          <div class="meter-ring-wrap" id="meter-distance">
+            <svg viewBox="0 0 80 80">
+              <circle class="meter-ring-bg" cx="40" cy="40" r="34"/>
+              <circle class="meter-ring-fill" cx="40" cy="40" r="34"/>
+            </svg>
+            <div class="meter-value">0</div>
+          </div>
+        </div>
+        <div class="meter-card">
+          <div class="meter-label">Ghost Probability</div>
+          <div class="meter-ring-wrap" id="meter-ghost">
+            <svg viewBox="0 0 80 80">
+              <circle class="meter-ring-bg" cx="40" cy="40" r="34"/>
+              <circle class="meter-ring-fill" cx="40" cy="40" r="34"/>
+            </svg>
+            <div class="meter-value">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prediction -->
+      <div class="panel">
+        <div class="panel-title">📡 Prediction</div>
+        <div class="prediction-row">
+          <span class="label">Reply window</span>
+          <span class="value" id="pred-window">—</span>
+        </div>
+        <div class="prediction-row">
+          <span class="label">Confidence</span>
+          <span class="value" id="pred-confidence">—</span>
+        </div>
+      </div>
+
+      <!-- Hidden Signals -->
+      <div class="panel" id="hidden-signals-panel">
+        <div class="panel-title">🔍 Hidden Signals Detected <span class="badge" id="hs-count">0</span></div>
+        <ul id="hs-list"></ul>
+      </div>
+
+      <!-- Summary -->
+      <div class="panel" id="summary-panel">
+        <div class="panel-title">📋 Analysis Summary</div>
+        <p id="summary-text"></p>
+      </div>
+
+      <!-- Reply Generator -->
+      <div class="panel" id="replies-panel">
+        <div class="panel-title">💬 Reply Generator</div>
+        <div class="reply-option">
+          <div class="reply-label">Soft + Confident</div>
+          <div class="reply-text" id="reply-soft">Locked</div>
+        </div>
+        <div class="reply-option">
+          <div class="reply-label">Playful</div>
+          <div class="reply-text" id="reply-playful">Locked</div>
+        </div>
+        <div class="reply-option">
+          <div class="reply-label">Direct</div>
+          <div class="reply-text" id="reply-direct">Locked</div>
+        </div>
+      </div>
+
+      <!-- Trends -->
+      <div class="panel trend-section" id="trend-section" style="display:none;">
+        <div class="panel-title">📈 Trend Analysis</div>
+        <div class="trend-row">
+          <span class="trend-label">Interest trend</span>
+          <span class="trend-badge stable" id="trend-interest">Stable</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-label">Ghost probability trend</span>
+          <span class="trend-badge stable" id="trend-ghost">Stable</span>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-buttons">
+        <button class="btn-secondary" onclick="scanAnother()">Scan Another</button>
+        <button class="btn-secondary" onclick="shareScore()">📤 Share Score</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Scanner overlay -->
+  <div id="scanner-overlay" class="scanner-overlay">
+    <div class="scanner-ring"></div>
+    <div class="scanner-text" id="scanner-text">Scanning tone…</div>
+  </div>
+
+  <!-- Paywall modal -->
+  <div id="paywall-overlay" class="paywall-overlay">
+    <div class="paywall-sheet" style="position:relative;">
+      <button class="paywall-close" onclick="hidePaywall()">✕</button>
+      <h2>Unlock Full Breakdown</h2>
+      <p class="paywall-sub">See hidden signals, get AI reply suggestions, track trends over time.</p>
+      <ul class="paywall-features">
+        <li>Unlimited message scans</li>
+        <li>Hidden signal details revealed</li>
+        <li>AI-generated reply options</li>
+        <li>Full analysis summaries</li>
+        <li>Trend tracking over time</li>
+      </ul>
+      <div class="paywall-buttons">
+        <button class="btn-paywall primary" onclick="checkout('lifetime')">
+          <span class="price">$47</span> <span class="label">one-time — lifetime access</span>
+        </button>
+        <button class="btn-paywall secondary" onclick="checkout('monthly')">
+          <span class="price">$19</span><span class="label">/month — cancel anytime</span>
+        </button>
+      </div>
+      <p class="paywall-note">Secure checkout via Stripe. Cancel anytime.</p>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+  <script src="/static/share.js"></script>
+  <script>
+    // Fix direction toggle (remove the hidden default button) and set default
+    document.getElementById('dir-they-default')?.remove();
+    document.querySelectorAll('.dir-btn')[0]?.classList.add('active');
+
+    // Expose last result for share card
+    const _origRender = null;
+    const _origFetch = window.fetch;
+    window.fetch = async function (...args) {
+      const res = await _origFetch.apply(this, args);
+      return res;
+    };
+  </script>
+</body>
+</html>

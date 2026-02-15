@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostRadar – Unlocked!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="status-page">
+    <div class="status-icon">🔓</div>
+    <h1>You're Unlocked!</h1>
+    <p>Full signal breakdowns, reply generator, and trend tracking are now yours. Time to stop overthinking.</p>
+    <a href="/app" class="btn-primary">Start Scanning</a>
+  </div>
+
+  <script>
+    // Confirm purchase server-side
+    (async () => {
+      const params = new URLSearchParams(window.location.search);
+      const sessionId = params.get('session_id');
+      if (sessionId) {
+        try {
+          await fetch('/api/confirm?session_id=' + encodeURIComponent(sessionId));
+        } catch (e) { /* webhook will handle it */ }
+      }
+    })();
+  </script>
+</body>
+</html>

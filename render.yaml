@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: ghostradar
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ghostradar-db
+          property: connectionString
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRICE_MONTHLY
+        sync: false
+      - key: STRIPE_PRICE_LIFETIME
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: APP_NAME
+        value: GhostRadar
+
+databases:
+  - name: ghostradar-db
+    plan: free
