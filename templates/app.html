@@ -19,9 +19,8 @@
     <section class="scan-section">
       <textarea id="scan-input" class="scan-textarea" placeholder="Paste a message…" rows="4"></textarea>
       <div class="direction-toggle">
-        <button class="dir-btn" data-dir="they" id="dir-they">They sent</button>
-        <button class="dir-btn active" data-dir="they" id="dir-they-default" style="display:none;">They sent</button>
-        <button class="dir-btn" data-dir="me" id="dir-me">I sent</button>
+        <button class="dir-btn active" data-dir="they">They sent</button>
+        <button class="dir-btn" data-dir="me">I sent</button>
       </div>
       <button id="scan-btn" class="scan-btn">⚡ Scan Signals</button>
     </section>
@@ -174,18 +173,6 @@
 
   <script src="/static/app.js"></script>
   <script src="/static/share.js"></script>
-  <script>
-    // Fix direction toggle (remove the hidden default button) and set default
-    document.getElementById('dir-they-default')?.remove();
-    document.querySelectorAll('.dir-btn')[0]?.classList.add('active');
 
-    // Expose last result for share card
-    const _origRender = null;
-    const _origFetch = window.fetch;
-    window.fetch = async function (...args) {
-      const res = await _origFetch.apply(this, args);
-      return res;
-    };
-  </script>
 </body>
 </html>
