@@ -102,14 +102,16 @@ def api_scan():
         "locked": not unlocked,
     }
 
+    # Summary + archetype always visible (the AI "voice")
+    response_data["summary"] = result.get("summary", "")
+
+    # Hidden signals + replies are the paid unlock
     if unlocked:
         response_data["hidden_signals"] = result.get("hidden_signals", [])
         response_data["replies"] = result.get("replies", {})
-        response_data["summary"] = result.get("summary", "")
     else:
         response_data["hidden_signals"] = []
         response_data["replies"] = {}
-        response_data["summary"] = ""
 
     resp = make_response(jsonify(response_data))
     set_device_cookie(resp, device_id)

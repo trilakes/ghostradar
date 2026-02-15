@@ -111,9 +111,9 @@
     animateMeter('meter-distance', data.emotional_distance, colorForScore(data.emotional_distance, true));
     animateMeter('meter-ghost', data.ghost_probability, colorForScore(data.ghost_probability, true));
 
-    // Archetype
+    // Archetype — always visible
     const archetypeEl = document.getElementById('archetype-badge');
-    if (data.archetype && !data.locked) {
+    if (data.archetype) {
       archetypeEl.textContent = data.archetype;
       archetypeEl.style.display = 'inline-block';
     } else {
@@ -140,16 +140,11 @@
     document.getElementById('pred-window').textContent = data.reply_window || '—';
     document.getElementById('pred-confidence').textContent = data.confidence || '—';
 
-    // Summary panel
+    // Summary panel — always visible (the AI "voice")
     const summaryPanel = document.getElementById('summary-panel');
     const summaryText  = document.getElementById('summary-text');
-    if (data.locked) {
-      summaryPanel.classList.add('panel-locked');
-      summaryText.textContent = 'Analysis summary locked.';
-    } else {
-      summaryPanel.classList.remove('panel-locked');
-      summaryText.textContent = data.summary || '';
-    }
+    summaryPanel.classList.remove('panel-locked');
+    summaryText.textContent = data.summary || '';
 
     // Replies panel
     const repliesPanel = document.getElementById('replies-panel');
