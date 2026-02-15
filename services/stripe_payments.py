@@ -5,13 +5,12 @@ stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 
 APP_URL = os.environ.get("APP_URL", "http://localhost:5000")
 PRICE_MONTHLY = os.environ.get("STRIPE_PRICE_MONTHLY")
-PRICE_LIFETIME = os.environ.get("STRIPE_PRICE_LIFETIME")
 
 
-def create_checkout_session(user_id: str, plan: str) -> str:
+def create_checkout_session(user_id: str, plan: str = "monthly") -> str:
     """Create a Stripe Checkout session and return the URL."""
-    price_id = PRICE_MONTHLY if plan == "monthly" else PRICE_LIFETIME
-    mode = "subscription" if plan == "monthly" else "payment"
+    price_id = PRICE_MONTHLY
+    mode = "subscription"
 
     session = stripe.checkout.Session.create(
         mode=mode,

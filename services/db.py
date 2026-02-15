@@ -86,28 +86,20 @@ def increment_free_scan(user_id: str):
 
 def is_unlocked(user: dict) -> bool:
     from datetime import datetime
-    if user["plan"] == "lifetime":
-        return True
     if user["plan"] == "monthly" and user.get("unlocked_until"):
         return user["unlocked_until"] > datetime.utcnow()
     return False
 
 
-def unlock_user(user_id: str, plan: str):
+def unlock_user(user_id: str, plan: str = "monthly"):
     from datetime import datetime, timedelta
     conn = get_conn()
     try:
         with conn.cursor() as cur:
-            if plan == "lifetime":
-                cur.execute(
-                    "UPDATE users SET plan = 'lifetime', unlocked_until = NULL WHERE id = %s",
-                    (user_id,),
-                )
-            else:
-                cur.execute(
-                    "UPDATE users SET plan = 'monthly', unlocked_until = %s WHERE id = %s",
-                    (datetime.utcnow() + timedelta(days=30), user_id),
-                )
+            cur.execute(
+                "UPDATE users SET plan = 'monthly', unlocked_until = %s WHERE id = %s",
+                (datetime.utcnow() + timedelta(days=30), user_id),
+            )
         conn.commit()
     finally:
         conn.close()

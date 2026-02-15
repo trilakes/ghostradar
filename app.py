@@ -181,9 +181,9 @@ def api_create_checkout():
     device_id = get_device_id()
     user = get_or_create_user(device_id)
     data = request.get_json(force=True)
-    plan = data.get("plan", "lifetime")
+    plan = "monthly"
 
-    if plan not in ("monthly", "lifetime"):
+    if plan != "monthly":
         return jsonify({"error": "Invalid plan"}), 400
 
     try:

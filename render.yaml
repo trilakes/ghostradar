@@ -19,8 +19,6 @@ services:
         sync: false
       - key: STRIPE_PRICE_MONTHLY
         sync: false
-      - key: STRIPE_PRICE_LIFETIME
-        sync: false
       - key: APP_URL
         sync: false
       - key: APP_NAME
